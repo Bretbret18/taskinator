@@ -77,8 +77,9 @@ var createTaskEl = function (taskDataObj) {
     taskDataObj.id = taskIdCounter;
 
     tasks.push(taskDataObj);
-    //
 
+    saveTasks();
+    //
 
     var taskActionsEl = createTaskActions(taskIdCounter);
     listItemEl.appendChild(taskActionsEl);
@@ -154,6 +155,9 @@ var completeEditTask = function (taskName, taskType, taskId) {
     };
 
 
+    saveTasks();
+    //
+
     alert("Task Updated!");
 
     formEl.removeAttribute("data-task-id");
@@ -201,13 +205,16 @@ var taskStatusChangeHandler = function (event) {
         tasksCompletedEl.appendChild(taskSelected);
     }
 
-// update final section
-// update task's in task array
-for (var i = 0; i < tasks.length; i++) {
-    if (tasks[i].id === parseInt(taskId)) {
-        tasks[i].status = statusValue;
+    // update final section
+    // update task's in task array
+    for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(taskId)) {
+            tasks[i].status = statusValue;
+        }
     }
-}
+
+    // update final section
+    saveTasks();
 
 };
 
@@ -219,20 +226,22 @@ var deleteTask = function (taskId) {
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
     taskSelected.remove();
 
-// update final section
-// create new array to hold updated list of tasks
+    // update final section
+    // create new array to hold updated list of tasks
 
-// loop through current tasks
-for (var i = 0; i < tasks.length; i++) {
-    // if tasks[i].id doesn't match the value of taskId, let's keep that task
-    if (tasks[i].id !== parseInt(taskId)) {
-        updatedTaskArr.push(tasks[i]);
+    // loop through current tasks
+    for (var i = 0; i < tasks.length; i++) {
+        // if tasks[i].id doesn't match the value of taskId, let's keep that task
+        if (tasks[i].id !== parseInt(taskId)) {
+            updatedTaskArr.push(tasks[i]);
+        }
     }
-}
 
-// update final section
-// reassign tasks array to be the same as updatedTaskArr
-tasks = updatedTaskArr;
+    // update final section
+    // reassign tasks array to be the same as updatedTaskArr
+    tasks = updatedTaskArr;
+
+    saveTasks();
 
 };
 
@@ -297,7 +306,10 @@ var dropTaskHandler = function (event) {
         }
     }
 
-//console.log(tasks);
+    // update final section
+    saveTasks();
+
+    //console.log(tasks);
 
 };
 
@@ -307,6 +319,13 @@ var dragLeaveHandler = function (event) {
         taskListEl.removeAttribute("style");
     }
 };
+
+// update final section
+//
+var saveTasks = function () {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+};
+
 
 
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
